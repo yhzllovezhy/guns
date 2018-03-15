@@ -83,7 +83,7 @@ spring:
     db-name: guns
     filters: log4j,wall,mergeStat
 
-#flowable数据源和多数据源配置
+#多数据源配置
 guns:
   muti-datasource:
     default-dataSource-name: dataSourceGuns #默认的数据源名称

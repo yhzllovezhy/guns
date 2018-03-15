@@ -3,18 +3,28 @@ package com.stylefeng.guns.config;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import com.stylefeng.guns.core.common.constant.DatasourceEnum;
 import com.stylefeng.guns.core.datascope.DataScopeInterceptor;
 import com.stylefeng.guns.core.datasource.DruidProperties;
 import com.stylefeng.guns.core.mutidatasource.DynamicDataSource;
 import com.stylefeng.guns.core.mutidatasource.config.MutiDataSourceProperties;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -26,7 +36,7 @@ import java.util.HashMap;
  */
 @Configuration
 @EnableTransactionManagement(order = 2)//由于引入多数据源，所以让spring事务的aop要在多数据源切换aop的后面
-@MapperScan(basePackages = {"com.stylefeng.guns.modular.*.dao"})
+@MapperScan(basePackages = {"com.stylefeng.guns.modular.*.dao"},sqlSessionTemplateRef  = "myBatisSqlSessionTemplate")
 public class MybatisPlusConfig {
 
     @Autowired
@@ -40,7 +50,7 @@ public class MybatisPlusConfig {
      */
     private DruidDataSource bizDataSource() {
         DruidDataSource dataSource = new DruidDataSource();
-        druidProperties.config(dataSource);
+        //druidProperties.config(dataSource);
         mutiDataSourceProperties.config(dataSource);
         return dataSource;
     }
@@ -53,6 +63,33 @@ public class MybatisPlusConfig {
         druidProperties.config(dataSource);
         return dataSource;
     }
+
+
+    @Bean(name ="sessionFactory")
+    @ConfigurationProperties(prefix ="mybatis-plus")
+    @ConfigurationPropertiesBinding()
+    @Primary
+    public MybatisSqlSessionFactoryBean sqlSessionFactory(@Qualifier(value="singleDatasource")DataSource dataSource){
+        MybatisSqlSessionFactoryBean bean =new MybatisSqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        return bean;
+    }
+
+    @Bean(name = "myBatisSqlSessionTemplate")
+    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    /*@Bean(name = "myBatisSqlSessionTemplate")
+    @Primary
+    public SqlSessionFactory myBatisSqlSessionTemplate(@Qualifier("singleDatasource") DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:com/stylefeng/guns/modular/system/dao/mapping*//*.xml"));
+        bean.setTypeAliasesPackage("com.stylefeng.guns.modular.system.model");
+        return bean.getObject();
+    }*/
+
 
     /**
      * 单数据源连接池配置
