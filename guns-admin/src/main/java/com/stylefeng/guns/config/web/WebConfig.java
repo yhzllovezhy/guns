@@ -60,6 +60,33 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private GunsProperties gunsProperties;
 
+    @Bean
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = jsonConverter.getObjectMapper();
+        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        return jsonConverter;
+    }
+
+    @Autowired
+    private FastJsonHttpMessageConverter fastJsonHttpMessageConverter;
+
+    @Override
+    public void configureMessageConverters(
+            List<HttpMessageConverter<?>> converters) {
+        converters.add(mappingJackson2HttpMessageConverter());
+        converters.add(fastJsonHttpMessageConverter);
+    }
+    /*@Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        super.configureMessageConverters(converters);
+
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper mapper = converter.getObjectMapper();
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        converters.add(converter);
+    }*/
+
     /**
      * 增加swagger的支持
      */
