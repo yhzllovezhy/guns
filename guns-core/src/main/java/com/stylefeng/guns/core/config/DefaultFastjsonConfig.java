@@ -31,7 +31,7 @@ import java.util.List;
 @ConditionalOnWebApplication
 public class DefaultFastjsonConfig {
 
-    //@Bean
+    @Bean
     public FastJsonHttpMessageConverter fastJsonHttpMessageConverter() {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
         converter.setFastJsonConfig(fastjsonConfig());
