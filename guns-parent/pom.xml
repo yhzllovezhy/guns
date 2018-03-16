@@ -183,6 +183,11 @@
                 <artifactId>hutool-http</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <optional>true</optional>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -202,6 +207,9 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>1.5.9.RELEASE</version>
+                    <configuration>
+                        <fork>true</fork>//该配置必须
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
