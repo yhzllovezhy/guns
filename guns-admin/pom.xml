@@ -155,6 +155,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>//该配置必须
+                </configuration>
             </plugin>
         </plugins>
         <resources>

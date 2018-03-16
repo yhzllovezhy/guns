@@ -60,7 +60,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private GunsProperties gunsProperties;
 
-    @Bean
+    /*@Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = jsonConverter.getObjectMapper();
@@ -76,7 +76,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             List<HttpMessageConverter<?>> converters) {
         converters.add(mappingJackson2HttpMessageConverter());
         converters.add(fastJsonHttpMessageConverter);
-    }
+    }*/
     /*@Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);

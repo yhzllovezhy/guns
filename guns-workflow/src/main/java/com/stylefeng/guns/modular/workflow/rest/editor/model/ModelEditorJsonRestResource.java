@@ -12,7 +12,10 @@
  */
 package com.stylefeng.guns.modular.workflow.rest.editor.model;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.Feature;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -29,6 +32,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 /**
  * @author Tijs Rademakers
  */
@@ -44,9 +50,9 @@ public class ModelEditorJsonRestResource implements ModelDataJsonConstants {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @RequestMapping(value = "/model/{modelId}/json", method = RequestMethod.GET)
-    public ObjectNode getEditorJson(@PathVariable String modelId) {
-        ObjectNode modelNode = null;
+    @RequestMapping(value = "/model/{modelId}/json", method = RequestMethod.GET, produces = "application/json")
+    public JSONObject getEditorJson(@PathVariable String modelId) {
+        JSONObject modelNode = null;
 
         Model model = repositoryService.getModel(modelId);
 
@@ -55,14 +61,20 @@ public class ModelEditorJsonRestResource implements ModelDataJsonConstants {
                 if (StringUtils.isNotEmpty(model.getMetaInfo())) {
                     //objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 
-                    modelNode = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
+
+                    modelNode = JSONObject.parseObject(model.getMetaInfo());
+
+                    //modelNode = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
                 } else {
-                    modelNode = objectMapper.createObjectNode();
-                    modelNode.put(MODEL_NAME, model.getName());
+                    modelNode.put(MODEL_NAME,model.getName());
+                    //modelNode = objectMapper.createObjectNode();
+                    //modelNode.put(MODEL_NAME, model.getName());
                 }
                 modelNode.put(MODEL_ID, model.getId());
-                ObjectNode editorJsonNode = (ObjectNode) objectMapper.readTree(
-                        new String(repositoryService.getModelEditorSource(model.getId()), "utf-8"));
+                //ObjectNode editorJsonNode = (ObjectNode) objectMapper.readTree(
+                        //new String(repositoryService.getModelEditorSource(model.getId()), "utf-8"));
+                //String str = new String(repositoryService.getModelEditorSource(model.getId()), "utf-8");
+                JSONObject editorJsonNode = JSON.parseObject(new String(repositoryService.getModelEditorSource(model.getId()), "utf-8"));
                 modelNode.put("model", editorJsonNode);
 
             } catch (Exception e) {
