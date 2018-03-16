@@ -1,8 +1,6 @@
 package com.stylefeng.guns.modular.workflow.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.stylefeng.guns.core.datasource.DruidProperties;
-import com.stylefeng.guns.core.mutidatasource.DynamicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -16,7 +14,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
