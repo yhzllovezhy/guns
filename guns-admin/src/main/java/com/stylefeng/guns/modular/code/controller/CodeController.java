@@ -15,10 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * 试一下代码上传
- */
-
-/**
  * 代码生成控制器
  *
  * @author fengshuonan
