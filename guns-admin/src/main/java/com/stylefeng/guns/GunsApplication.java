@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * SpringBoot方式启动类 涛哥测试一下代码提交
+ * SpringBoot方式启动类 涛哥测试一下代码提交2
  *
  * @author stylefeng
  * @Date 2017/5/21 12:06
