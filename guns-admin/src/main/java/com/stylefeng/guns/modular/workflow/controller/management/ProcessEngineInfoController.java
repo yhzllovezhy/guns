@@ -24,7 +24,7 @@ public class ProcessEngineInfoController {
 
     @RequestMapping("")
     public ModelAndView info() {
-        ModelAndView mav = new ModelAndView("management/engine-info");
+        ModelAndView mav = new ModelAndView("/workflow/engine/engine_info.html");
         Map<String,String> engineProperties = managementService.getProperties();
         mav.addObject("engineProperties", engineProperties);
 

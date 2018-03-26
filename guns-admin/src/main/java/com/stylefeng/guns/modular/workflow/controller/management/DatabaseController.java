@@ -28,7 +28,7 @@ public class DatabaseController {
 
     @RequestMapping("")
     public ModelAndView index(@RequestParam(value = "tableName", required = false) String tableName, HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("management/database");
+        ModelAndView mav = new ModelAndView("/workflow/db/table.html");
 
         // 读取表
         Map<String, Long> tableCount = managementService.getTableCount();
