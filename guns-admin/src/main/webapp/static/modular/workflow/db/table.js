@@ -29,7 +29,6 @@ $(function () {
 });
 
 
-
 function openTable(tableName){
     layer.open({
         type: 2,
