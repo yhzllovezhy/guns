@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -26,9 +27,20 @@ public class DatabaseController {
     @Autowired
     ManagementService managementService;
 
+    public static void main(String[] args) {
+        //System.out.println(3.2+2.1);
+        //System.out.println(Double.valueOf("3.2")+Double.valueOf("2.1"));
+        //BigDecimal bigDecimalNum0 = new BigDecimal("3.2");
+        //BigDecimal bigDecimalNum2 = new BigDecimal("2.1");
+        //System.out.println(bigDecimalNum0.add(bigDecimalNum2).doubleValue());
+        //System.out.println(3.2+2.1);
+    }
+
+
+
     @RequestMapping("")
     public ModelAndView index(@RequestParam(value = "tableName", required = false) String tableName, HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("/workflow/db/processAndDeploy.html");
+        ModelAndView mav = new ModelAndView("/workflow/db/table.html");
 
         // 读取表
         Map<String, Long> tableCount = managementService.getTableCount();

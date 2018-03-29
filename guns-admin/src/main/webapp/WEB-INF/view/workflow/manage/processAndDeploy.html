@@ -3,66 +3,43 @@
     <div class="col-sm-12">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>引擎数据库</h5>
+                <h5>流程列表</h5>
             </div>
             <div class="ibox-content">
-                <div class="container-fluid">
-                    <div class="row-fluid">
-                        <!--这部分是显示数据库表名-->
-                        @if(!has(tableMetaData)){
-                        <div class="span12">
-                            <ul id="table_ul">
-                                @for(entry in tableCount){
-                                @var key = entry.key;
-                                @var value = entry.value;
-                                <li><a onclick="openTable('${key}')" href="javaScript:void(0);">${key}（${value}）</a></li>
-                                @}
-                            </ul>
-                        </div>
-                        @}
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span12" style="overflow:auto; width: 100%;">
-                            <!--这部分是表呈现-->
-                            @if(has(tableMetaData)){
-                            <blockquote class="layui-elem-quote">
-                                <p>
-                                    记录（${tableMetaData.tableName}）
-                                </p>
-                            </blockquote>
-                            <table class="layui-table">
-                                <thead>
-                                <tr>
-                                    <th>行</th>
-                                    @for(data in tableMetaData.columnNames){
-                                    @var column = tableMetaData.columnTypes;
-                                    @var index = dataLP.index;
-                                    @var columnType = column[index-1];//你肯定想问,为什么要减一,beetl隐含定义变量索引从1开始的
-                                    <th title="字段类型:${columnType}">${data}(${columnType})</th>
-                                    @}
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @var counter = ((page.pageNo-1)*page.pageSize)+1;
-                                @for(data in page.result){
-                                <tr>
-                                    <td>${dataLP.index}</td>
-                                    @for(column in tableMetaData.columnNames){
-                                    @var columnValue = data[column];
-                                    <td>${columnValue}</td>
-                                    @}
-                                </tr>
-                                @}
-                                </tbody>
-                            </table>
-                            <input type="hidden" id="totalCount" value="${page.totalCount}"/>
-                            <input type="hidden" id="pageIndex" value="${page.pageNo}"/>
-                            @var openTable = has(tableMetaData);
-                            <input type="hidden" id="openTable" value="${openTable}"/>
-                            <input type="hidden" id="tableName" value="${tableMetaData.tableName}"/>
-                            <div id="test1"></div>
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="row">
+                                    <div class="col-lg-10 col-sm-9">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-sm-6">
+                                                <#NameCon id="name" name="流程名称" placeholder="输入流程名称"/>
+                                            </div>
+                                            <!--<div class="col-lg-4 col-sm-6">
+                                                <#TimeCon id="beginTime" name="注册开始日期" isTime="false" pattern="YYYY-MM-DD"/>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-6">
+                                                <#TimeCon id="endTime" name="注册结束日期" isTime="false" pattern="YYYY-MM-DD"/>
+                                            </div>-->
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <#button name="搜索" icon="fa-search" clickFun="MgrUser.search()"/>
+                                                <#button name="重置" icon="fa-trash" clickFun="MgrUser.resetSearch()" space="true"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hidden-xs" id="managerTableToolbar" role="group">
+                                    <#button name="部署流程" icon="fa-plus" clickFun="MgrUser.openAddMgr()"/>
+                                    <#button name="重新部署全部" icon="fa-gavel" clickFun="MgrUser.openAddMgr()"/>
+                                </div>
+                                <#table id="managerTable"/>
 
-                            @}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,7 +47,5 @@
         </div>
     </div>
 </div>
-<link href="${ctxPath}/static/js/plugins/layui/css/layui.css" rel="stylesheet"/>
-<script src="${ctxPath}/static/js/plugins/layui/layui.js"></script>
-<script src="${ctxPath}/static/modular/workflow/db/table.js"></script>
+<script src="${ctxPath}/static/modular/workflow/manage/processAndDeploy.js"></script>
 @}

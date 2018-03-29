@@ -1,11 +1,15 @@
 package com.stylefeng.guns.modular.workflow.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.stylefeng.guns.core.page.PageBT;
+import com.stylefeng.guns.core.page.PageInfoBT;
 import com.stylefeng.guns.modular.workflow.cmd.JumpActivityCmd;
 import com.stylefeng.guns.modular.workflow.controller.service.WorkflowProcessDefinitionService;
 import com.stylefeng.guns.modular.workflow.controller.service.WorkflowTraceService;
+import com.stylefeng.guns.modular.workflow.dto.ProcessAndDeployPageDto;
 import com.stylefeng.guns.modular.workflow.util.Page;
 import com.stylefeng.guns.modular.workflow.util.PageUtil;
 import com.stylefeng.guns.modular.workflow.util.UserUtil;
@@ -33,10 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -90,36 +91,66 @@ public class ActivitiController {
     @Autowired
     ProcessEngineConfiguration processEngineConfiguration;
 
+
+    @GetMapping(value = "/processAndDeploy")
+    public String processAndDeploy(){
+        return "/workflow/manage/processAndDeploy.html";
+    }
+
+
     /**
      * 流程定义列表
      *
      * @return
      */
     @RequestMapping(value = "/process-list")
-    public ModelAndView processList(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("workflow/process-list");
+    @ResponseBody
+    public PageInfoBT processList(HttpServletRequest request, PageBT pageBT) {
+        //ModelAndView mav = new ModelAndView("workflow/process-list");
+        //List<Object[]> objects = new ArrayList<Object[]>();
 
-    /*
-     * 保存两个对象，一个是ProcessDefinition（流程定义），一个是Deployment（流程部署）
-     */
-        List<Object[]> objects = new ArrayList<Object[]>();
+        /*
+         * 保存两个对象，一个是ProcessDefinition（流程定义），一个是Deployment（流程部署）
+         */
+        List<ProcessAndDeployPageDto> resultList = new ArrayList<ProcessAndDeployPageDto>();
+
 
         Page<Object[]> page = new Page<Object[]>(PageUtil.PAGE_SIZE);
+        page.setPageNo(pageBT.getPageNumber());
+        page.setPageSize(pageBT.getPageSize());
         int[] pageParams = PageUtil.init(page, request);
 
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().orderByDeploymentId().desc();
         List<ProcessDefinition> processDefinitionList = processDefinitionQuery.listPage(pageParams[0], pageParams[1]);
+
         for (ProcessDefinition processDefinition : processDefinitionList) {
+
+            ProcessAndDeployPageDto processAndDeployPageDto = new ProcessAndDeployPageDto();
+            processAndDeployPageDto.setProcessId(processDefinition.getId());
+            processAndDeployPageDto.setProcessDeploymentId(processDefinition.getDeploymentId());
+            processAndDeployPageDto.setProcessKey(processDefinition.getKey());
+            processAndDeployPageDto.setProcessName(processDefinition.getName());
+            processAndDeployPageDto.setProcessResourceName(processDefinition.getResourceName());
+            processAndDeployPageDto.setProcessSuspended(processDefinition.isSuspended());
+            processAndDeployPageDto.setProcessVersion(processDefinition.getVersion());
+            //根据部署Id 查询部署实例
             String deploymentId = processDefinition.getDeploymentId();
             Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-            objects.add(new Object[]{processDefinition, deployment});
+            //设置部署时间
+            processAndDeployPageDto.setDeploymentTime(deployment.getDeploymentTime());
+
+            resultList.add(processAndDeployPageDto);
+
+            //objects.add(new Object[]{processDefinition, deployment});
         }
 
-        page.setTotalCount(processDefinitionQuery.count());
-        page.setResult(objects);
-        mav.addObject("page", page);
+        //page.setTotalCount(processDefinitionQuery.count());
+        //page.setResult(objects);
+        //JSONObject response = new JSONObject();
 
-        return mav;
+        PageInfoBT<ProcessAndDeployPageDto> pageInfoBT = new PageInfoBT<ProcessAndDeployPageDto>(resultList,processDefinitionQuery.count());
+
+        return pageInfoBT;
     }
 
     /**

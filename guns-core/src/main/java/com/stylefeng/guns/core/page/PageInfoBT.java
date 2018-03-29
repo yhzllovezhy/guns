@@ -23,6 +23,11 @@ public class PageInfoBT<T> {
         this.total = page.getTotal();
     }
 
+    public PageInfoBT(List<T> rows,long total) {
+        this.rows = rows;
+        this.total = total;
+    }
+
     public List<T> getRows() {
         return rows;
     }
