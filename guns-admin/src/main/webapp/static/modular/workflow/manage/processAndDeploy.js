@@ -34,7 +34,12 @@ MgrUser.initColumn = function () {
         },
         {title: '部署时间', field: 'deploymentTime', align: 'center', valign: 'middle', sortable: true},
         {title: '是否挂起', field: 'processSuspended', align: 'center', valign: 'middle', sortable: true},
-        {title: '操作', field: 'statusName', align: 'center', valign: 'middle', sortable: true}];
+        {title: '操作', field: 'statusName', align: 'center', valign: 'middle', sortable: true,
+            formatter:function (value,row,index) {
+                return "<button type='button' class='btn btn-danger btn-xs button-margin' onclick='MgrUser.delProcess("+row.processDeploymentId+")'>删除</button>" +
+                    "<button type='button' class='btn btn-primary btn-xs button-margin' id='"+row.processId+"' onclick='MgrUser.convertToModel(id)' >转换为Model</button>";
+            }
+        }];
     return columns;
 };
 
@@ -52,172 +57,41 @@ MgrUser.check = function () {
     }
 };
 
-/**
- * 点击添加管理员
- */
-MgrUser.openAddMgr = function () {
-    var index = layer.open({
-        type: 2,
-        title: '添加管理员',
-        area: ['800px', '560px'], //宽高
-        fix: false, //不固定
-        maxmin: true,
-        content: Feng.ctxPath + '/mgr/user_add'
+
+MgrUser.deployAll = function(){
+    $.post("/workflow/redeploy/all",function(result){
+        alert(result.code);
     });
-    this.layerIndex = index;
-};
+}
 
-/**
- * 点击修改按钮时
- * @param userId 管理员id
- */
-MgrUser.openChangeUser = function () {
-    if (this.check()) {
-        var index = layer.open({
-            type: 2,
-            title: '编辑管理员',
-            area: ['800px', '450px'], //宽高
-            fix: false, //不固定
-            maxmin: true,
-            content: Feng.ctxPath + '/mgr/user_edit/' + this.seItem.id
-        });
-        this.layerIndex = index;
-    }
-};
-
-/**
- * 点击角色分配
- * @param
- */
-MgrUser.roleAssign = function () {
-    if (this.check()) {
-        var index = layer.open({
-            type: 2,
-            title: '角色分配',
-            area: ['300px', '400px'], //宽高
-            fix: false, //不固定
-            maxmin: true,
-            content: Feng.ctxPath + '/mgr/role_assign/' + this.seItem.id
-        });
-        this.layerIndex = index;
-    }
-};
-
-/**
- * 删除用户
- */
-MgrUser.delMgrUser = function () {
-    if (this.check()) {
-
-        var operation = function(){
-            var userId = MgrUser.seItem.id;
-            var ajax = new $ax(Feng.ctxPath + "/mgr/delete", function () {
-                Feng.success("删除成功!");
+MgrUser.delProcess = function(deploymentId){
+    $.post("/workflow/process/delete",{deploymentId:deploymentId},
+        function(result){
+            if(result.code==200){
+                Feng.info("删除成功!");
                 MgrUser.table.refresh();
-            }, function (data) {
-                Feng.error("删除失败!" + data.responseJSON.message + "!");
-            });
-            ajax.set("userId", userId);
-            ajax.start();
-        };
-
-        Feng.confirm("是否删除用户" + MgrUser.seItem.account + "?",operation);
-    }
-};
-
-/**
- * 冻结用户账户
- * @param userId
- */
-MgrUser.freezeAccount = function () {
-    if (this.check()) {
-        var userId = this.seItem.id;
-        var ajax = new $ax(Feng.ctxPath + "/mgr/freeze", function (data) {
-            Feng.success("冻结成功!");
-            MgrUser.table.refresh();
-        }, function (data) {
-            Feng.error("冻结失败!" + data.responseJSON.message + "!");
-        });
-        ajax.set("userId", userId);
-        ajax.start();
-    }
-};
-
-/**
- * 解除冻结用户账户
- * @param userId
- */
-MgrUser.unfreeze = function () {
-    if (this.check()) {
-        var userId = this.seItem.id;
-        var ajax = new $ax(Feng.ctxPath + "/mgr/unfreeze", function (data) {
-            Feng.success("解除冻结成功!");
-            MgrUser.table.refresh();
-        }, function (data) {
-            Feng.error("解除冻结失败!");
-        });
-        ajax.set("userId", userId);
-        ajax.start();
-    }
-}
-
-/**
- * 重置密码
- */
-MgrUser.resetPwd = function () {
-    if (this.check()) {
-        var userId = this.seItem.id;
-        parent.layer.confirm('是否重置密码为111111？', {
-            btn: ['确定', '取消'],
-            shade: false //不显示遮罩
-        }, function () {
-            var ajax = new $ax(Feng.ctxPath + "/mgr/reset", function (data) {
-                Feng.success("重置密码成功!");
-            }, function (data) {
-                Feng.error("重置密码失败!");
-            });
-            ajax.set("userId", userId);
-            ajax.start();
-        });
-    }
-};
-
-MgrUser.resetSearch = function () {
-    $("#name").val("");
-    $("#beginTime").val("");
-    $("#endTime").val("");
-
-    MgrUser.search();
-}
-
-MgrUser.search = function () {
-    var queryData = {};
-
-    queryData['deptid'] = MgrUser.deptid;
-    queryData['name'] = $("#name").val();
-    queryData['beginTime'] = $("#beginTime").val();
-    queryData['endTime'] = $("#endTime").val();
-
-    MgrUser.table.refresh({query: queryData});
-}
-
-MgrUser.onClickDept = function (e, treeId, treeNode) {
-    MgrUser.deptid = treeNode.id;
-    MgrUser.search();
-};
-
-MgrUser.menuChange = function(){
-    console.log("点击了切换菜单...");
-    $("#side-menu li",parent.document).each(function (index){
-        //console.log("ddd");
-        console.log($(this).attr("menu-title"));
-        if($(this).attr("menu-title")=='流程管理'){
-            $(this).toggleClass("active");
-            $(this).find("ul").addClass("in");
-        }
-
+            }
+        }).error(function(XMLHttpRequest, textStatus, errorThrown){
+            if(XMLHttpRequest.responseJSON.code==500){
+                Feng.info("删除失败!");
+            }
     });
-};
+
+}
+
+
+MgrUser.convertToModel = function(processId){
+    //alert(processId);
+    parent.layer.confirm('转换Model成功,打开Model列表？', {
+        btn: ['马上去', '不需要'],
+        shade: false //不显示遮罩
+    }, function () {
+        //跳转到model列表页面
+       alert("ddddddd");
+    });
+}
+
+
 
 
 $(function () {

@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.stylefeng.guns.config.properties.WorkflowProperties;
+import com.stylefeng.guns.core.base.controller.BaseController;
+import com.stylefeng.guns.core.base.tips.Tip;
 import com.stylefeng.guns.core.page.PageBT;
 import com.stylefeng.guns.core.page.PageInfoBT;
 import com.stylefeng.guns.modular.workflow.cmd.JumpActivityCmd;
@@ -66,7 +69,7 @@ import java.util.zip.ZipInputStream;
  */
 @Controller
 @RequestMapping(value = "/workflow")
-public class ActivitiController {
+public class ActivitiController extends BaseController{
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -91,6 +94,9 @@ public class ActivitiController {
     @Autowired
     ProcessEngineConfiguration processEngineConfiguration;
 
+
+    @Autowired
+    private WorkflowProperties workflowProperties;
 
     @GetMapping(value = "/processAndDeploy")
     public String processAndDeploy(){
@@ -160,9 +166,10 @@ public class ActivitiController {
      * @throws Exception
      */
     @RequestMapping(value = "/redeploy/all")
-    public String redeployAll(@Value("#{APP_PROPERTIES['export.diagram.path']}") String exportDir) throws Exception {
-        workflowProcessDefinitionService.deployAllFromClasspath(exportDir);
-        return "redirect:/workflow/process-list";
+    @ResponseBody
+    public Tip redeployAll() throws Exception {
+        workflowProcessDefinitionService.deployAllFromClasspath(workflowProperties.getExportDiagramPath());
+        return SUCCESS_TIP;
     }
 
     /**
@@ -226,9 +233,10 @@ public class ActivitiController {
      * @param deploymentId 流程部署ID
      */
     @RequestMapping(value = "/process/delete")
-    public String delete(@RequestParam("deploymentId") String deploymentId) {
+    @ResponseBody
+    public Tip delete(@RequestParam("deploymentId") String deploymentId) {
         repositoryService.deleteDeployment(deploymentId, true);
-        return "redirect:/workflow/process-list";
+        return SUCCESS_TIP;
     }
 
     /**

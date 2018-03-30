@@ -98,6 +98,10 @@ logging:
   file: guns.log
 
 ---
+#activiti引擎的配置
+activiti:
+  export.diagram.path: /tmp/kft-activiti-demo
+
 
 ##########################################################
 ###################  正式环境的profile  ###################
@@ -114,4 +118,3 @@ logging:
   level.root: warn
   path: logs/
   file: guns.log
-

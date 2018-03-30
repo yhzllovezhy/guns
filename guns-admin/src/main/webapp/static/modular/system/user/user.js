@@ -197,16 +197,7 @@ MgrUser.onClickDept = function (e, treeId, treeNode) {
 };
 
 MgrUser.menuChange = function(){
-    console.log("点击了切换菜单...");
-    $("#side-menu li",parent.document).each(function (index){
-        //console.log("ddd");
-        console.log($(this).attr("menu-title"));
-        if($(this).attr("menu-title")=='流程管理'){
-            $(this).toggleClass("active");
-            $(this).find("ul").addClass("in");
-        }
-
-    });
+    parent.changeMenu("系统管理","角色管理");
 };
 
 
