@@ -64,6 +64,7 @@ MgrUser.deployAll = function(){
     });
 }
 
+
 MgrUser.delProcess = function(deploymentId){
     $.post("/workflow/process/delete",{deploymentId:deploymentId},
         function(result){
@@ -77,6 +78,10 @@ MgrUser.delProcess = function(deploymentId){
             }
     });
 
+}
+
+MgrUser.deployOnceProcess = function () {
+    alert("dddd");
 }
 
 

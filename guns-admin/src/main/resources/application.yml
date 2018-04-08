@@ -97,10 +97,12 @@ logging:
   path: logs/
   file: guns.log
 
----
 #activiti引擎的配置
 activiti:
-  export.diagram.path: /tmp/kft-activiti-demo
+  exportDiagramPath: /tmp/kft-activiti-demo
+
+---
+
 
 
 ##########################################################

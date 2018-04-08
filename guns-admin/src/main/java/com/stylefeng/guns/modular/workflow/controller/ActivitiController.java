@@ -137,6 +137,7 @@ public class ActivitiController extends BaseController{
             processAndDeployPageDto.setProcessKey(processDefinition.getKey());
             processAndDeployPageDto.setProcessName(processDefinition.getName());
             processAndDeployPageDto.setProcessResourceName(processDefinition.getResourceName());
+            processAndDeployPageDto.setProcessDiagramResourceName(processDefinition.getDiagramResourceName());
             processAndDeployPageDto.setProcessSuspended(processDefinition.isSuspended());
             processAndDeployPageDto.setProcessVersion(processDefinition.getVersion());
             //根据部署Id 查询部署实例
